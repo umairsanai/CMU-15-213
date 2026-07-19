@@ -20,6 +20,27 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  *     be graded. 
 */
 
+
+void trans_64(int M, int N, int A[N][M], int B[M][N]) {
+    for (int i = 0; i < N; i += 8) {
+        for (int j = 0; j < M; j += 8) {
+
+            for (int x = i; x < N && x < i+8; x++) {
+                for (int y = j; y < M && y < j+4; y++) {
+                    B[y][x] = A[x][y];
+                }
+            }
+
+            for (int x = i+7; x < N && x >= i; x--) {
+                for (int y = j+4; y < M && y < j+8; y++) {
+                    B[y][x] = A[x][y];
+                }
+            }
+            
+        }
+    }
+}
+
 void trans_block_tehnique(int M, int N, int A[N][M], int B[M][N], int ROW_BLOCK_SIZE, int COLUMN_BLOCK_SIZE) {
 
     for (int i = 0; i < N; i += ROW_BLOCK_SIZE) {
@@ -30,7 +51,7 @@ void trans_block_tehnique(int M, int N, int A[N][M], int B[M][N], int ROW_BLOCK_
                     B[y][x] = A[x][y];
                 }
             }
-            
+
         }
     }
 }
@@ -40,7 +61,9 @@ void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 {
     if (M == 32 && N == 32) {
         trans_block_tehnique(M, N, A, B, 8, 8);
-    } else {
+    } else if (M == 64 && N == 64) {
+        trans_64(M, N, A, B);
+    } else if (M == 61 && N == 67) {
         trans_block_tehnique(M, N, A, B, 8, 4);   
     }
 }
