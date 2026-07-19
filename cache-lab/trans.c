@@ -18,10 +18,31 @@ int is_transpose(int M, int N, int A[N][M], int B[M][N]);
  *     the description string "Transpose submission", as the driver
  *     searches for that string to identify the transpose function to
  *     be graded. 
- */
+*/
+
+void trans_block_tehnique(int M, int N, int A[N][M], int B[M][N], int ROW_BLOCK_SIZE, int COLUMN_BLOCK_SIZE) {
+
+    for (int i = 0; i < N; i += ROW_BLOCK_SIZE) {
+        for (int j = 0; j < M; j += COLUMN_BLOCK_SIZE) {
+
+            for (int x = i; x < N && x < i+ROW_BLOCK_SIZE; x++) {
+                for (int y = j; y < M && y < j+COLUMN_BLOCK_SIZE; y++) {
+                    B[y][x] = A[x][y];
+                }
+            }
+            
+        }
+    }
+}
+
 char transpose_submit_desc[] = "Transpose submission";
 void transpose_submit(int M, int N, int A[N][M], int B[M][N])
 {
+    if (M == 32 && N == 32) {
+        trans_block_tehnique(M, N, A, B, 8, 8);
+    } else {
+        trans_block_tehnique(M, N, A, B, 8, 4);   
+    }
 }
 
 /* 
